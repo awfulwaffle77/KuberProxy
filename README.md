@@ -22,6 +22,18 @@ style guide. If this is the case, I will change my approach.
 
 Altough not exactly what I wanted, the current approach works.
 
+Now that the server is working, to be able to send requests to specific 
+hosts, we need to create them. We will do this by "simulating" the
+existence of such hosts. From the main file, we will create Flask
+applications with specifci arguments to make that possible. We
+will create subprocesses to make this possible
+
+I tried to respect PEP88.
+
+Currently tested with the host servers in separate terminal windows
+and it works correctly. Next, I will need to tweak the responses
+and the algortihms.
+
 ### Reminders
 
 Reading the document I can see that it is stated that " downstream 

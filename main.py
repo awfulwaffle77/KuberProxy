@@ -7,7 +7,7 @@ rp = reverse_proxy.ReverseProxy()
 
 @app.route("/")
 def route():
-    return rp.test()
+    return rp.route("test_request")
 
 if __name__ == "__main__":
     app.run(host=rp.socket_address.address, port = rp.socket_address.port, debug=True)
