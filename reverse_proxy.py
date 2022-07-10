@@ -21,14 +21,18 @@ class ReverseProxy:
 
                 self.socket_address = utils.SocketAddress(yaml_struct['proxy']['listen'])
 
-                self.run_server()
+                # these variables are used for round robin and must be kept in 
+                # memory while the program is running so that we may know 
+                # which other service/host to choose further
+                self.service_idx = 0
+                self.host_idx = 0
 
-                print(" ")
+                self.run_server()
             except:
                 print("Error processing YAML.")
     
     
-    def route(self, request, algorithm=None):
+    def get_request(self, algorithm=None):
         """
             Specifies how to route and where to route (to which
             downstream host)
@@ -40,16 +44,26 @@ class ReverseProxy:
            r = requests.get(url)
 
            return r
+        else:
+            return algorithm()
 
-
-    def run_backend_servers(self):
+    def _round_robin(self):
         """
-        !!! THIS SHOULD NOT EXIST AT ALL !!!
-            Runs the Flask application as subprocesses for the hosts under services.
+            Round robin algorithm declared protected to be used with get_request() 
+            function.
         """
-        for service in self.services:
-            for host in service.host:
-               subprocess.run(['python','host_server.py', '-t',host.address,'-p', host.port]) 
+        service = self.services[self.service_idx]   
+        host = service.hosts[self.host_idx]
+        
+        url = "http://" + str(host.address) + ":" + str(host.port) + "/"
+        r = requests.get(url)
 
-    def test(self):
-        return "hello world"
+        self.host_idx = (self.host_idx + 1) % len(service.hosts)
+        # if host_idx is at the last element
+        if self.host_idx == 0:
+            # increment service_idx
+            self.service_idx = (self.service_idx + 1) % len(self.services)
+
+        return r
+         
+
