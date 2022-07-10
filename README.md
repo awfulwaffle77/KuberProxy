@@ -34,9 +34,68 @@ Currently tested with the host servers in separate terminal windows
 and it works correctly. Next, I will need to tweak the responses
 and the algortihms.
 
+I tried to kept thing tidy and I have put the reverse_proxy.py 
+file and the util in a separate directory, making it act like
+a package. I have followed the instructions at 
+[this stackoverflow link](https://stackoverflow.com/questions/35727134/module-imports-and-init-py)
+to achieve it.
+
+`TODO: Add some screenshots`
+
+`TODO: Add some proper exception mechanisms at flask get request`
+
+As I have not played with Helm before, I will try and create a Kuberenetes deployment first. 
+
+## Docker
+
+Created the Dockerfile and then build it and ran it. (The kubernetes
+folder should not be in this image)
+
+Built the image:
+
+`docker build -t reverse_proxy:0.1.0 .`
+
+Created a new network:
+
+`docker network create --subnet=172.18.0.0/16 proxy_network`
+
+Ran a container:
+
+`docker run -d -p 5000:8081 reverse_proxy:0.1.0`
+
+Using `docker inspect <container_id>`, I can see
+the following:
+```
+ "Ports": {
+                "8081/tcp": [
+                    {
+                        "HostIp": "0.0.0.0",
+                        "HostPort": "5000"
+                    }
+                ]
+            },
+```
+This means that I should be able to access it through
+`curl 127.0.0.1:5000`, which I am able to.
+
+We also need to create an image of the application
+that will run on the downstream servers.
+
+`docker build -t downstream_server:0.1.0 .`
+
+We then retag and push the images to docker hub:
+
+`docker image tag reverse_proxy:0.1.0 morphinn/reverse_proxy:0.1.0`
+`docker image tag downstream_server:0.1.0 morphinn/downstream_server:0.1.0`
+
+`docker push morphinn/reverse_proxy:0.1.0`
+`docker push morphinn/downstream_server:0.1.0`
+
 ### Reminders
 
 Reading the document I can see that it is stated that " downstream 
-services are identified using the Host Http header". I am not sure 
-why this would be needed but I will make the responses contain
-this header.
+services are identified using the Host Http header". The responses contain
+this header. 
+
+-> JSON POST requests are not tested, but should also work properly
+

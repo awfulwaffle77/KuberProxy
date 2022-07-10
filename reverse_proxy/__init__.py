@@ -1,9 +1,7 @@
-from transformers import RagModel
 import yaml
 import requests
 import random
-import subprocess
-import utils
+from reverse_proxy import utils
 
 class ReverseProxy:
     def __init__(self, _config_filename = "config.yaml") -> None:
@@ -27,7 +25,6 @@ class ReverseProxy:
                 self.service_idx = 0
                 self.host_idx = 0
 
-                self.run_server()
             except:
                 print("Error processing YAML.")
     

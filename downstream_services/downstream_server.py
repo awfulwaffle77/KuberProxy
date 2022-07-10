@@ -1,5 +1,4 @@
-from flask import Flask, Response, make_response
-import json
+from flask import Flask, make_response
 import argparse
 
 from yaml import parse
