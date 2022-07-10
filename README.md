@@ -91,6 +91,33 @@ We then retag and push the images to docker hub:
 `docker push morphinn/reverse_proxy:0.1.0`
 `docker push morphinn/downstream_server:0.1.0`
 
+We use helm to install our chart
+
+`helm.exe install kuber-reverse-proxy ../helm_chart/reverse_proxy_helm`
+
+`deployment.yaml: line 38` - had to change port to 5000
+
+Tried to delete services using 
+`kubectl delete services kuber-reverse-proxy -n default`, but helm
+showed `Error: INSTALLATION FAILED: cannot re-use a name that is still in use`
+when trying `helm install`; mitigated this with `helm upgrade`.
+
+As the application is running on port 8081, I have to set the liveness
+and readiness probes to check that port so that the pods can run correctly.
+
+I can see that the app runs using `kubectl logs <pod-name>`.
+
+Using `minikube service kuber-reverse-proxy` I can open
+the app in my browser. I can see that message 
+`* service default/kuber-reverse-proxy has no node port` is
+shown. Setting a node port should allow me to connect
+to the app without using the minikube command, but this
+may also be caveat of using Windows and minikube.
+
+Checking the [documentation], I can see that it is stated
+that `The network is limited if using the Docker driver on Darwin,
+Windows, or WSL, and the Node IP is not reachable directly.` so my assumption was true.
+
 ### Reminders
 
 Reading the document I can see that it is stated that " downstream 
