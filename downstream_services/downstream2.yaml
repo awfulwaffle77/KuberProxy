@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: downstream2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: downstream2
+  template:
+    metadata:
+      labels:
+        app: downstream2
+    spec:
+      containers:
+      - name: downstream2
+        image: morphinn/downstream_services:0.1.0
+        command: ["python", "downstream_server.py",  "-p", "9092"]
+        ports:
+        - containerPort: 9092
+        imagePullPolicy: Always
+

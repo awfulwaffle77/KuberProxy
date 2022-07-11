@@ -16,7 +16,7 @@ args = parser.parse_args()
 
 # if the host argument is not provided, then default with localhost
 if args.host == None:  
-    args.host = "127.0.0.1"
+    args.host = "0.0.0.0"
 
 @app.route("/")
 def response_example():

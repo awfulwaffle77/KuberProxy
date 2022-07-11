@@ -114,9 +114,28 @@ shown. Setting a node port should allow me to connect
 to the app without using the minikube command, but this
 may also be caveat of using Windows and minikube.
 
-Checking the [documentation], I can see that it is stated
-that `The network is limited if using the Docker driver on Darwin,
-Windows, or WSL, and the Node IP is not reachable directly.` so my assumption was true.
+Checking the [documentation](https://minikube.sigs.k8s.io/docs/handbook/accessing/), 
+I can see that it is stated that `The network is limited if using 
+the Docker driver on Darwin, Windows, or WSL, and the Node IP is not reachable directly.` so my assumption was true.
+
+Using `helm template <path_to_chart>` we can see the templates 
+with values changes as per the `values.yaml` file.
+
+To be able to better (and quicker) reproduce the environment, 
+I have created manually the downstream servers as deploymnet.
+
+`kubectl create -f downstream-jobx.yaml` where x is the number of
+the deployment.
+
+To be able to use the downstream severs' IPs in cofig.yaml, 
+I have created 2 deployments (with `downstream_services/downstream[12].yaml`).
+I am getting their IP addresses and I hardcode them in my config file
+and then I run `helm upgrade` to rerun the reverse proxy.
+Altough hacky, it is working and is proving that the reverse-proxy
+application works properly. The hacky implementation is on the side
+of the downstream services, which are not the point of this
+assignment. The documentation that made it possible for me to
+think about this approach is [here](https://dev.to/narasimha1997/communication-between-microservices-in-a-kubernetes-cluster-1n41).
 
 ### Reminders
 

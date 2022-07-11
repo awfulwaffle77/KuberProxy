@@ -9,7 +9,7 @@ proxy:
     - name: my-service
       domain: my-service.my-company.com
       hosts:
-        - address: "127.0.0.1"
+        - address: "172.17.0.3"
           port: 9091
-        - address: "127.0.0.1"
+        - address: "172.17.0.7"
           port: 9092
