@@ -3,6 +3,7 @@ import requests
 import random
 from reverse_proxy import utils
 
+
 class ReverseProxy:
     def __init__(self, _config_filename = "config.yaml") -> None:
         """ 
@@ -64,6 +65,7 @@ class ReverseProxy:
            return self.__cache(rand_service, rand_host) 
         else:
             return algorithm()
+
 
     def _round_robin(self):
         """

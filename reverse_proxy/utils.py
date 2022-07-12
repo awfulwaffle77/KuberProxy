@@ -2,13 +2,11 @@
     Structures that make our work easier.
 """
 
-import yaml
-
 
 class SocketAddress:
     """
-        As per the link at https://en.m.wikipedia.org/wiki/Network_socket#Socket_addresses
-        I have decided to name the combination of IP Address + Port Socket Address
+        Used to store IP and port
+        Name chosen as per https://en.m.wikipedia.org/wiki/Network_socket#Socket_addresses
     """
     def __init__(self, yaml_struct) -> None:
         self.address = yaml_struct['address']
@@ -23,12 +21,12 @@ class SocketAddress:
         """
         return (str(self.address) + str(self.port))
 
+
 class Service:
     def __init__(self, yaml_struct) -> None:
         """
-            The cleanest implementation would be if the Service class
-            takes care of creating its members based on a
-            yaml_struct['proxy']['service']
+            Creates a structure from yaml_struct['proxy']['service'],
+            containing a name, a domain and a list of hosts as SocketAddress
         """
         self.name = yaml_struct['name']
         self.domain = yaml_struct['domain']
@@ -37,6 +35,7 @@ class Service:
         for host in yaml_struct['hosts']:
             self.hosts.append(SocketAddress(host))
     
+
     def __str__(self):
         """
             This function overrides the str function over this class
