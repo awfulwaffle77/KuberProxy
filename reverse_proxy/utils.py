@@ -13,6 +13,15 @@ class SocketAddress:
     def __init__(self, yaml_struct) -> None:
         self.address = yaml_struct['address']
         self.port = yaml_struct['port']
+    
+
+    def __str__(self):
+        """
+            This function overrides the str function over this class
+            so that we may easily use it when needed to transform the 
+            class into a dict key.
+        """
+        return (str(self.address) + str(self.port))
 
 class Service:
     def __init__(self, yaml_struct) -> None:
@@ -27,4 +36,11 @@ class Service:
         self.hosts = []
         for host in yaml_struct['hosts']:
             self.hosts.append(SocketAddress(host))
-        print(" ")
+    
+    def __str__(self):
+        """
+            This function overrides the str function over this class
+            so that we may easily use it when needed to transform the 
+            class into a dict key.
+        """
+        return (str(self.name) + str(self.domain))

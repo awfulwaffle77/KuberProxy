@@ -3,10 +3,21 @@ from flask import Flask
 
 app = Flask(__name__)
 
-rp = reverse_proxy.ReverseProxy()
+rp = reverse_proxy.ReverseProxy("config2.yaml")
 
 @app.route("/")
+def sanity_check():
+    """
+        Acts as a sanity/health check for the server
+    """
+    return ""
+
+@app.route("/basic")
 def get():
+    """
+        Returns a basic response from the downstream
+        servers.
+    """
     try:
         return rp.get_request(algorithm=rp._round_robin).text
     except:

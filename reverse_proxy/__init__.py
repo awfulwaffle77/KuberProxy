@@ -19,6 +19,9 @@ class ReverseProxy:
 
                 self.socket_address = utils.SocketAddress(yaml_struct['proxy']['listen'])
 
+                # empty dictionary that will act as a cache 
+                self.__cache_dict = {}
+
                 # these variables are used for round robin and must be kept in 
                 # memory while the program is running so that we may know 
                 # which other service/host to choose further
@@ -28,6 +31,26 @@ class ReverseProxy:
             except:
                 print("Error processing YAML.")
     
+
+    def __cache(self, service, host):
+        """
+            A function that acts accordingly before making a request,
+            retrieving it from cache memory or making the request
+            and adding it to cache memory if it doesn't exist there.
+        """
+        s = str(service) + str(host)  # the key in the dict
+        if s in self.__cache_dict:
+            return self.__cache_dict[s]
+        else:
+           url = "http://" + str(host.address) + ":" + str(host.port) + "/"
+           r = requests.get(url)
+
+           print("Caching..")
+           self.__cache_dict[s] = r  # add to cache
+
+           return r
+        
+
     
     def get_request(self, algorithm=None):
         """
@@ -37,10 +60,8 @@ class ReverseProxy:
         if algorithm == None:
            rand_service = random.choice(self.services)
            rand_host = random.choice(rand_service.hosts)
-           url = "http://" + str(rand_host.address) + ":" + str(rand_host.port) + "/"
-           r = requests.get(url)
 
-           return r
+           return self.__cache(rand_service, rand_host) 
         else:
             return algorithm()
 
@@ -52,8 +73,7 @@ class ReverseProxy:
         service = self.services[self.service_idx]   
         host = service.hosts[self.host_idx]
         
-        url = "http://" + str(host.address) + ":" + str(host.port) + "/"
-        r = requests.get(url)
+        r = self.__cache(service, host)
 
         self.host_idx = (self.host_idx + 1) % len(service.hosts)
         # if host_idx is at the last element
@@ -62,5 +82,3 @@ class ReverseProxy:
             self.service_idx = (self.service_idx + 1) % len(self.services)
 
         return r
-         
-

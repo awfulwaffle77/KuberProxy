@@ -137,6 +137,27 @@ of the downstream services, which are not the point of this
 assignment. The documentation that made it possible for me to
 think about this approach is [here](https://dev.to/narasimha1997/communication-between-microservices-in-a-kubernetes-cluster-1n41).
 
+## Monitoring
+
+As other people with more experience in this field are surely 
+to know more about SLO/SLI than me, I found [this article](https://www.squadcast.com/blog/using-observability-tools-to-set-slos-for-kubernetes-applications)
+which proved to be very helpful. I will choose some of the 
+SLIs presented over there and I will implement a Prometheus
+over my cluster.
+
+I have used helm to install Prometheus, by following the
+[repo](https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus)
+and [Grafana](https://github.com/grafana/helm-charts).
+
+Following [this](https://blog.marcnuri.com/prometheus-grafana-setup-minikube)
+guide and trying to expose the prometheus server with command
+`kubectl expose service prometheus-server --type=NodePort --target-port=9090 --name=prometheus-server-np`
+did not work for me, but I have used 
+`minikube service poremetheus-test-prometheus-server` and it properly worked.
+
+Checked how to properly implement SLIs and SLOs 
+[here](https://docs.bitnami.com/tutorials/implementing-slos-using-prometheus)
+
 ### Reminders
 
 Reading the document I can see that it is stated that " downstream 
