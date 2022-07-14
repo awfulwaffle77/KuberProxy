@@ -166,3 +166,24 @@ and [Grafana repo](https://github.com/grafana/helm-charts).
 Checking with `minikube service poremetheus-test-prometheus-server`, 
 I could observe that Prometheus works and Grafana too.
 
+## Feedback
+
+### Implementation 
+
+- The reverse proxy does not take into account the Host header to redirect the queries - "The reverse proxy should support multiple downstream services with multiple instances, downstream services are identified using the Host Http header."
+- It only supports GET requests, forwarded to hardcoded service paths - this should either be configurable or pass all client requests
+- Both random (default behavior) and round-robin take all services into account without any regards for the target service, which means that even if target A is requested it could be that a response is forwarded from service B (this is again caused by not using the Host header)
+- If one service instance is down and if the request hasn’t already been cached, the whole reverse proxy is stuck serving the failing request for all clients. Correct error handling would have prevented such an issue, had the proxy analysed the origin responses before caching & forwarding them
+- The in-memory cache extension is poorly implemented - the caching key would clash in reality, since the URLs are not parsed correctly. Moreover, the caching doesn’t obey any of the HTTP 1.1. protocol’s caching rules, described in https://datatracker.ietf.org/doc/html/rfc7234
+- The proxy’s configuration is properly loaded, but not validated.
+- No unit tests.
+  
+### Automation
+
+- Helm chart OK.
+- Liveness and Readiness probes should have been configured on a dedicated path.
+
+### Monitoring
+
+- Did not have much experience on the topic but tried to search for information and came up with basic definitions of what could be relevant SLIs
+- Did not implement any SLIs but did come up with Prometheus/Grafana deployed using Helm charts. He also delivered an HPA configuration but did not mention it in the docs
